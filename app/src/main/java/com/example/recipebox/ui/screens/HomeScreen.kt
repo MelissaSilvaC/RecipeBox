@@ -63,7 +63,7 @@ fun HomeScreen(
                 Icon(
                     Icons.Default.Add,
                     contentDescription = "Add",
-                    tint = MaterialTheme.colorScheme.onPrimary // Cor do ícone
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         },

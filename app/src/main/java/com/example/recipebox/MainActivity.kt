@@ -39,6 +39,7 @@ import androidx.room.Room
 import com.example.recipebox.data.RecipeDatabase
 import com.example.recipebox.navigation.AppDestination
 import com.example.recipebox.ui.screens.DetailsScreen
+import com.example.recipebox.ui.screens.FormEditScreen
 import com.example.recipebox.ui.screens.FormScreen
 import com.example.recipebox.ui.screens.HomeScreen
 import com.example.recipebox.ui.theme.RecipeBoxTheme
@@ -89,21 +90,35 @@ class MainActivity : ComponentActivity() {
                         composable(AppDestination.Form.route) {
                             FormScreen(
                                 viewModel = viewModel,
-                                onNavigateToHome = { navController.popBackStack() }
+                                NavigateBack = { navController.popBackStack() }
                             )
                         }
                         composable("${AppDestination.Details.route}/{recipeId}") { backStackEntry ->
-                            val recipeId =
-                                backStackEntry.arguments?.getString("recipeId")?.toIntOrNull()
-                            recipeId?.let {
+                            val recipeId = backStackEntry.arguments?.getString("recipeId")?.toIntOrNull()
+                            recipeId?.let { id ->
+                                val recipe by viewModel.getRecipeById(id).observeAsState()
 
-                                val recipe by viewModel.getRecipeById(it).observeAsState()
-                                recipe?.let {
+                                recipe?.let { recipeDetails ->
                                     DetailsScreen(
                                         viewModel = viewModel,
-                                        recipe = it,
-                                        onEditRecipe = { navController.navigate(AppDestination.Form.route) },
-                                        onNavigateToHome = { navController.popBackStack() }
+                                        recipe = recipeDetails,
+                                        navController = navController,
+                                        onEditRecipe = { recipe -> navController.navigate("${AppDestination.Edit.route}/${recipe.id}") },
+                                        NavigateBack = { navController.popBackStack() }
+                                    )
+                                }
+                            }
+                        }
+                        composable("${AppDestination.Edit.route}/{recipeId}") { backStackEntry ->
+                            val recipeId = backStackEntry.arguments?.getString("recipeId")?.toIntOrNull()
+                            recipeId?.let { id ->
+                                val recipe by viewModel.getRecipeById(id).observeAsState()
+
+                                recipe?.let { recipeEdit ->
+                                    FormEditScreen(
+                                        viewModel = viewModel,
+                                        recipe = recipeEdit,
+                                        NavigateBack = { navController.popBackStack() }
                                     )
                                 }
                             }
@@ -117,7 +132,6 @@ class MainActivity : ComponentActivity() {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeBox(
     navController: NavController,

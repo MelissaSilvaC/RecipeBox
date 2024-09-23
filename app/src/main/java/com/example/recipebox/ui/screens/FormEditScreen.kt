@@ -1,6 +1,5 @@
 package com.example.recipebox.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,15 +13,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,22 +25,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recipebox.data.Recipe
-import com.example.recipebox.ui.theme.RecipeBoxTheme
 import com.example.recipebox.viewModel.RecipeViewModel
 
 @Composable
-fun FormScreen(
+fun FormEditScreen(
     viewModel: RecipeViewModel,
+    recipe: Recipe,
     NavigateBack: () -> Unit
 ) {
-    var title by remember { mutableStateOf("") }
-    var ingredients by remember { mutableStateOf("") }
-    var preparing by remember { mutableStateOf("") }
-    var preparingTime by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(recipe.title) }
+    var ingredients by remember { mutableStateOf(recipe.ingredients) }
+    var preparing by remember { mutableStateOf(recipe.preparing) }
+    var preparingTime by remember { mutableStateOf(recipe.preparingTime) }
 
     val scrollState = rememberScrollState()
 
@@ -62,7 +55,7 @@ fun FormScreen(
                 modifier = Modifier.padding(start = 5.dp).align(Alignment.CenterVertically),
                 fontWeight = FontWeight.W500,
                 fontSize = 25.sp,
-                text = "Criar Receita"
+                text = "Editar Receita"
             )
         }
 
@@ -108,20 +101,23 @@ fun FormScreen(
 
             Spacer(modifier = Modifier.padding(14.dp))
 
-            Button(modifier = Modifier.fillMaxWidth().padding(35.dp, 0.dp),
+            Button(modifier = Modifier
+                .fillMaxWidth()
+                .padding(35.dp, 0.dp),
                 shape = RoundedCornerShape(12.dp),
                 onClick = {
-                    val newRecipe = Recipe(
+                    val updatedRecipe = recipe.copy(
                         title = title,
                         ingredients = ingredients,
                         preparing = preparing,
                         preparingTime = preparingTime
                     )
-                    viewModel.upsertRecipe(newRecipe)
+                    viewModel.upsertRecipe(updatedRecipe)
                     NavigateBack()
                 }
-            ) { Text(fontSize = 18.sp, text = "Salvar") }
+            ) {
+                Text(fontSize = 18.sp, text = "Salvar Edição")
+            }
         }
     }
 }
-

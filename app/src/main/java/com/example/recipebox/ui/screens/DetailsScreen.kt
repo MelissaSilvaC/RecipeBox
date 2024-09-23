@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -31,7 +32,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.recipebox.data.Recipe
+import com.example.recipebox.navigation.AppDestination
 import com.example.recipebox.ui.components.RecipeCard
 import com.example.recipebox.ui.theme.RecipeBoxTheme
 import com.example.recipebox.viewModel.RecipeViewModel
@@ -40,8 +43,11 @@ import com.example.recipebox.viewModel.RecipeViewModel
 fun DetailsScreen(
     viewModel: RecipeViewModel,
     recipe: Recipe,
-    onEditRecipe: (Recipe) -> Unit,
-    onNavigateToHome: () -> Unit
+    navController: NavController,
+    onEditRecipe: (Recipe) -> Unit = { recipe ->
+    navController.navigate("${AppDestination.Edit.route}/${recipe.id}")
+    },
+    NavigateBack: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -51,11 +57,11 @@ fun DetailsScreen(
         .verticalScroll(scrollState),
     ){
         Row(modifier = Modifier
-                .fillMaxWidth()
-                .background(color = MaterialTheme.colorScheme.tertiaryContainer)
+            .fillMaxWidth()
+            .background(color = MaterialTheme.colorScheme.tertiaryContainer)
         ) {
             IconButton(
-                onClick = onNavigateToHome,
+                onClick = NavigateBack,
                 modifier = Modifier.align(Alignment.CenterVertically)
             ) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Arrow back")
@@ -158,15 +164,13 @@ fun DetailsScreen(
 
             Button(
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonColors(
+                colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error,
-                    contentColor = MaterialTheme.colorScheme.onError,
-                    disabledContentColor = MaterialTheme.colorScheme.onError,
-                    disabledContainerColor = MaterialTheme.colorScheme.error
+                    contentColor = MaterialTheme.colorScheme.onError
                 ),
                 onClick = {
                     viewModel.deleteRecipe(recipe)
-                    onNavigateToHome()
+                    NavigateBack()
                 }
             ) {
                 Row {
@@ -182,11 +186,9 @@ fun DetailsScreen(
 
             Button(
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonColors(
+                colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    disabledContentColor = MaterialTheme.colorScheme.onPrimary,
-                    disabledContainerColor = MaterialTheme.colorScheme.primary
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 ),
                 onClick = { onEditRecipe(recipe) }
             ) {
