@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.recipebox.data.Recipe
 import com.example.recipebox.data.Tag
+import com.example.recipebox.data.filters
 import com.example.recipebox.ui.components.recipe.RecipeCard
 import com.example.recipebox.ui.components.SearchBarComposable
 import com.example.recipebox.ui.components.filters.FiltersBar
@@ -41,7 +42,6 @@ fun LibraryScreen(
         }
     }
 
-
     // Atualiza a lista de receitas ao sincronizar com o Firestore
     db.collection("Recipe")
         .addSnapshotListener { snapshots, e ->
@@ -65,18 +65,13 @@ fun LibraryScreen(
                         tags = document.get("tags")?.let { value ->
                             if (value is List<*>) {
                                 value.mapNotNull { tagEntry ->
-                                    val parts = (tagEntry as? String)?.split(",")?.map { it.trim() }
-                                    if (parts != null && parts.size == 2) {
-                                        val title = parts[0]
-                                        val colorString = parts[1].take(8)
-                                        try {
-                                            val color = Color(android.graphics.Color.parseColor("#$colorString"))
-                                            title to color // Create Pair<String, Color>
-                                        } catch (e: IllegalArgumentException) {
-                                            null
+                                    (tagEntry as? String)?.let { tagName ->
+                                        // Busca a cor associada à tag nos filtros
+                                        val filter = filters.firstOrNull { filter ->
+                                            filter.tagList.any { it.name == tagName }
                                         }
-                                    } else {
-                                        null
+                                        val tagColor = filter?.tagList?.firstOrNull { it.name == tagName }?.color
+                                        if (tagColor != null) Tag(name = tagName, color = tagColor) else null
                                     }
                                 }
                             } else {

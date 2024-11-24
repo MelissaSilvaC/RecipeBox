@@ -50,7 +50,7 @@ fun FormScreen(
     var ingredients by remember { mutableStateOf("") }
     var preparing by remember { mutableStateOf("") }
     var preparingTime by remember { mutableStateOf("") }
-    val selectedTags = remember { mutableStateListOf<String>() } // Tags selecionadas
+    val selectedTags = remember { mutableStateListOf<String>() }
 
     val scrollState = rememberScrollState()
 
@@ -127,10 +127,10 @@ fun FormScreen(
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            filters.forEach { (groupName, tags) ->
+            filters.forEach { filter ->
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = groupName,
+                        text = filter.name,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
                         modifier = Modifier.padding(vertical = 6.dp)
@@ -141,16 +141,16 @@ fun FormScreen(
                             .fillMaxWidth()
                             .padding(bottom = 12.dp)
                     ) {
-                        items(tags) { (tagName, color) ->
+                        items(filter.tagList) { tag ->
                             TagChip(
-                                tagName = tagName,
-                                color = color,
-                                isSelected = selectedTags.contains(tagName),
+                                tagName = tag.name,
+                                color = tag.color,
+                                isSelected = selectedTags.contains(tag.name),
                                 onSelect = {
-                                    if (selectedTags.contains(tagName)) {
-                                        selectedTags.remove(tagName)
+                                    if (selectedTags.contains(tag.name)) {
+                                        selectedTags.remove(tag.name)
                                     } else {
-                                        selectedTags.add(tagName)
+                                        selectedTags.add(tag.name)
                                     }
                                 }
                             )
@@ -171,15 +171,6 @@ fun FormScreen(
                         val userEmail = currentUser.email ?: "Email desconhecido"
                         val userName = currentUser.displayName ?: "Usuário desconhecido"
 
-                        // Formata as tags selecionadas no formato "nome, cor"
-                        val formattedTags = selectedTags.map { tagName ->
-                            filters.flatMap { it.tagList }
-                                .find { it.name == tagName }
-                                ?.let {
-                                    "${it.name}, ${it.color.value.toULong().toString(16).padStart(8, '0').uppercase()}"
-                                }
-                        }.filterNotNull()
-
                         // Cria o objeto de receita
                         val newRecipe = hashMapOf(
                             "userEmail" to userEmail,
@@ -188,10 +179,9 @@ fun FormScreen(
                             "ingredients" to ingredients,
                             "preparing" to preparing,
                             "preparingTime" to preparingTime,
-                            "tags" to formattedTags // Array de strings no formato "nome, cor"
+                            "tags" to selectedTags
                         )
 
-                        // Salva a receita no Firestore
                         FirebaseFirestore.getInstance().collection("Recipe")
                             .add(newRecipe)
                             .addOnSuccessListener {

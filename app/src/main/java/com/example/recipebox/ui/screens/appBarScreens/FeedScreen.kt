@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.recipebox.data.Recipe
+import com.example.recipebox.data.Tag
+import com.example.recipebox.data.filters
 import com.example.recipebox.ui.components.recipe.FeedCard
 import com.example.recipebox.ui.components.SearchBarComposable
 import com.google.firebase.firestore.FirebaseFirestore
@@ -31,20 +33,23 @@ fun FeedScreen(
         recipe.title.contains(searchText.value, ignoreCase = true)
     }
 
-    //Atualizando a listagem de forma síncrona com snapshots
+    // Atualizando a listagem de forma síncrona com snapshots
     db.collection("Recipe")
         .addSnapshotListener { snapshots, e ->
             if (e != null) {
-                Log.w("LibraryScreen", "Listen failed.", e)
+                Log.e("FeedScreen", "Erro ao buscar receitas: ${e.message}")
                 return@addSnapshotListener
             }
-            // Limpando a lista antes de adicionar novos dados
+
             recipes.clear()
-            // Percorre os documentos e adiciona na lista
+
             snapshots?.forEach { document ->
+                val userEmail = document.getString("userEmail") ?: return@forEach
+
+                // Criando o objeto Recipe a partir do documento Firestore
                 val recipe = Recipe(
-                    id = document.getString("id") ?: "",
-                    userEmail = document.getString("userEmail") ?: "",
+                    id = document.id,
+                    userEmail = userEmail,
                     userName = document.getString("userName") ?: "",
                     title = document.getString("title") ?: "",
                     ingredients = document.getString("ingredients") ?: "",
@@ -52,20 +57,14 @@ fun FeedScreen(
                     preparingTime = document.getString("preparingTime") ?: "",
                     tags = document.get("tags")?.let { value ->
                         if (value is List<*>) {
-                            value.mapNotNull { tagEntry ->
-                                val parts = (tagEntry as? String)?.split(",")?.map { it.trim() }
-                                if (parts != null && parts.size == 2) {
-                                    val title = parts[0]
-                                    val colorString = parts[1]
-                                    try {
-                                        val truncatedColorString = colorString.take(8)
-                                        val color = Color(android.graphics.Color.parseColor("#$truncatedColorString"))
-                                        title to color
-                                    } catch (e: IllegalArgumentException) {
-                                        null
+                            value.mapNotNull { tagName ->
+                                (tagName as? String)?.let { name ->
+                                    // Busca a cor associada à tag nos filtros
+                                    val filter = filters.firstOrNull { filter ->
+                                        filter.tagList.any { it.name == name }
                                     }
-                                } else {
-                                    null
+                                    val tagColor = filter?.tagList?.firstOrNull { it.name == name }?.color
+                                    if (tagColor != null) Tag(name = name, color = tagColor) else null
                                 }
                             }
                         } else {
@@ -73,14 +72,17 @@ fun FeedScreen(
                         }
                     } ?: emptyList()
                 )
-                recipes.add(recipe)
+
+                recipes.add(recipe) // Adiciona a receita à lista
             }
         }
 
     Column {
+        // Barra de pesquisa
         SearchBarComposable(searchText)
-        Row(modifier = Modifier.padding(vertical = 16.dp)){}
+        Row(modifier = Modifier.padding(vertical = 16.dp)) {}
 
+        // Listagem de receitas
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             items(filteredRecipes) { recipe ->
                 FeedCard(
@@ -91,6 +93,6 @@ fun FeedScreen(
                 )
             }
         }
-
     }
 }
+

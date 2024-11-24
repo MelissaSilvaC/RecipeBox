@@ -45,22 +45,19 @@ fun UserDetailsScreen(
     NavigateBack: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
-    val auth = FirebaseAuth.getInstance()
-    val userInfo = auth.currentUser // Obtemos o usuário autenticado
 
-    // Nome e e-mail do usuário
-    val displayName = userInfo?.displayName ?: "Usuário Desconhecido"
-
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(vertical = 38.dp)
-        .verticalScroll(scrollState),
-    ){
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.tertiaryContainer)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 38.dp)
+            .verticalScroll(scrollState)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colorScheme.tertiaryContainer)
         ) {
-            Column(modifier = Modifier.padding(top = 4.dp,bottom = 14.dp)) {
+            Column(modifier = Modifier.padding(top = 4.dp, bottom = 14.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
                         onClick = { NavigateBack() },
@@ -74,7 +71,7 @@ fun UserDetailsScreen(
                     Text(
                         fontSize = 20.sp,
                         color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        text = displayName
+                        text = recipe.userName
                     )
                 }
 
@@ -98,7 +95,7 @@ fun UserDetailsScreen(
             }
         }
 
-        //Informações da receita
+        // Informações da receita
         InfoSection(
             title = "Ingredientes",
             info = recipe.ingredients
@@ -113,6 +110,5 @@ fun UserDetailsScreen(
             title = "Tempo de preparo",
             info = recipe.preparingTime
         )
-
     }
 }

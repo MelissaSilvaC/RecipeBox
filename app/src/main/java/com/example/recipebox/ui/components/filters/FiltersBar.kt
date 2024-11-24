@@ -23,7 +23,8 @@ fun FiltersBar(
     onFilteredRecipesChange: (List<Recipe>) -> Unit,
     onSelectedTagsChange: (List<Pair<String, Color>>) -> Unit
 ) {
-    val selectedTags = remember { mutableStateListOf<Pair<String, Color>>() }
+    /*
+    * val selectedTags = remember { mutableStateListOf<Pair<String, Color>>() }
     val selectedFilter = remember { mutableStateOf<Filter?>(null) }
 
     Column(modifier = Modifier.padding(top = 16.dp, bottom = 35.dp)) {
@@ -77,5 +78,6 @@ fun FiltersBar(
             }
         }
     }
+    * */
 }
 

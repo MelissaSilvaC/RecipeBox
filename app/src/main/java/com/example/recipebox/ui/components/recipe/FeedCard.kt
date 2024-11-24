@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.example.recipebox.ui.theme.RecipeBoxTheme
 import com.example.ui.theme.bodyFontFamily
 import com.example.recipebox.R
+import com.example.recipebox.data.Tag
 import com.example.recipebox.ui.components.RecipeTag
 import com.example.ui.theme.displayFontFamily
 import com.google.firebase.firestore.FirebaseFirestore
@@ -32,7 +33,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 fun FeedCard(
     userName: String,
     recipeTitle: String,
-    tags: List<Pair<String, Color>>,
+    tags: List<Tag>,
     onClick: () -> Unit = {},
 ) {
     Column(
@@ -94,22 +95,5 @@ fun FeedCard(
 
             }
         }
-    }
-}
-
-@Preview
-@Composable
-private fun FeedCardPreview() {
-    RecipeBoxTheme(dynamicColor = false) {
-        FeedCard(
-            userName = "Blau Blau",
-            recipeTitle = "Macarrão a Bolonhesa com carne desfiada",
-            tags = listOf(
-                "Rápido" to Color(0xFFE91E63),
-                "Sem lactose" to Color(0xFF00BCD4),
-                "Ovos" to Color(0xFFF44336)
-            ),
-            onClick = { /*TODO*/ }
-        )
     }
 }

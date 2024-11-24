@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.recipebox.R
 import com.example.recipebox.data.Recipe
+import com.example.recipebox.data.Tag
 import com.example.recipebox.data.filters
 import com.example.ui.theme.displayFontFamily
 import com.google.firebase.firestore.FirebaseFirestore
@@ -50,7 +51,17 @@ fun FormEditScreen(
     var ingredients by remember { mutableStateOf(recipe.ingredients) }
     var preparing by remember { mutableStateOf(recipe.preparing) }
     var preparingTime by remember { mutableStateOf(recipe.preparingTime) }
-    val selectedTags = remember { mutableStateListOf<Pair<String, Color>>(*recipe.tags.toTypedArray()) }
+
+    // Tags selecionadas, inicializadas corretamente
+    val selectedTags = remember {
+        mutableStateListOf<Tag>().apply {
+            recipe.tags.forEach { recipeTag ->
+                filters.forEach { filter ->
+                    filter.tagList.find { it.name == recipeTag.name }?.let { add(it) }
+                }
+            }
+        }
+    }
 
     val scrollState = rememberScrollState()
 
@@ -62,7 +73,7 @@ fun FormEditScreen(
         onFailure: (Exception) -> Unit
     ) {
         db.collection("Recipe").document(recipeId)
-            .set(updatedData, SetOptions.merge()) // Atualiza os campos existentes
+            .set(updatedData, SetOptions.merge())
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { exception -> onFailure(exception) }
     }
@@ -96,7 +107,7 @@ fun FormEditScreen(
             TextField(
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Titulo") },
+                label = { Text("Título") },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -158,13 +169,12 @@ fun FormEditScreen(
                             TagChip(
                                 tagName = tag.name,
                                 color = tag.color,
-                                isSelected = selectedTags.contains(tag.name to tag.color),
+                                isSelected = selectedTags.any { it.name == tag.name && it.color == tag.color },
                                 onSelect = {
-                                    val tagPair = tag.name to tag.color
-                                    if (selectedTags.contains(tagPair)) {
-                                        selectedTags.remove(tagPair)
+                                    if (selectedTags.any { it.name == tag.name && it.color == tag.color }) {
+                                        selectedTags.removeIf { it.name == tag.name && it.color == tag.color }
                                     } else {
-                                        selectedTags.add(tagPair)
+                                        selectedTags.add(tag)
                                     }
                                 }
                             )
@@ -175,7 +185,8 @@ fun FormEditScreen(
 
             Spacer(modifier = Modifier.padding(18.dp))
 
-            Button(modifier = Modifier.fillMaxWidth().padding(35.dp, 0.dp),
+            Button(
+                modifier = Modifier.fillMaxWidth().padding(35.dp, 0.dp),
                 shape = RoundedCornerShape(12.dp),
                 onClick = {
                     val updatedRecipe = mapOf(
@@ -183,9 +194,7 @@ fun FormEditScreen(
                         "ingredients" to ingredients,
                         "preparing" to preparing,
                         "preparingTime" to preparingTime,
-                        "tags" to selectedTags.map { (tagName, color) ->
-                            "$tagName, ${color.value.toString(16)}"
-                        }
+                        "tags" to selectedTags.map { it.name }
                     )
 
                     updateRecipe(

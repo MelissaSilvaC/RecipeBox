@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.recipebox.data.Tag
 import com.example.recipebox.ui.components.RecipeTag
 import com.example.recipebox.ui.theme.RecipeBoxTheme
 import com.example.ui.theme.displayFontFamily
@@ -27,7 +28,7 @@ import com.example.ui.theme.displayFontFamily
 fun RecipeCard(
     recipeName: String,
     onClick: () -> Unit,
-    tags: List<Pair<String, Color>>,
+    tags: List<Tag>,
     modifier: Modifier = Modifier
 ) {
     Card(

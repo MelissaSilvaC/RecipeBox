@@ -11,5 +11,5 @@ data class Recipe(
     val ingredients: String,
     val preparing: String,
     val preparingTime: String,
-    val tags: List<Pair<String, Color>>
+    val tags: List<Tag> = emptyList()
 ) : Serializable
