@@ -3,6 +3,7 @@ package com.example.recipebox.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -59,11 +61,14 @@ fun PasswordTextField(
                     .clickable { showPassword = !showPassword }
             ) {
                 Image(
-                    painter = painterResource(
-                        id = if (showPassword) R.drawable.visibility else R.drawable.visibility_off
-                    ),
+                    painter = painterResource(id = if (showPassword) R.drawable.visibility else R.drawable.visibility_off),
                     contentDescription = if (showPassword) "Esconder senha" else "Mostrar senha",
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    colorFilter = if(isSystemInDarkTheme()){
+                        ColorFilter.tint(MaterialTheme.colorScheme.secondary)
+                    }else{
+                        ColorFilter.tint(Color.Black)
+                    },
                 )
             }
         },

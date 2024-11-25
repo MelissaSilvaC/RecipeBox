@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -64,6 +66,12 @@ class MainActivity : ComponentActivity() {
         auth = FirebaseAuth.getInstance(firebaseApp!!)
         db = FirebaseFirestore.getInstance(firebaseApp)
 
+        val startDestination = if (auth.currentUser != null) {
+            AppDestination.Feed.route
+        } else {
+            AppDestination.Login.route
+        }
+
         setContent {
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -103,7 +111,7 @@ class MainActivity : ComponentActivity() {
                     auth = auth
                 ) {
                     //Cofigurando as rotas do app
-                    NavHost(navController = navController, startDestination = AppDestination.Login.route
+                    NavHost(navController = navController, startDestination = startDestination
                     ) {
                         composable(AppDestination.Login.route) {
                             LoginScreen(
@@ -230,14 +238,22 @@ fun RecipeBox(
                             Image(
                                 painter = painterResource(id = R.drawable.box_fill),
                                 contentDescription = "RecipeBox Logo",
-                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondaryContainer),
+                                colorFilter = if(isSystemInDarkTheme()){
+                                    ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                                }else{
+                                    ColorFilter.tint(MaterialTheme.colorScheme.secondaryContainer)
+                                },
                                 modifier = Modifier.size(50.dp)
                             )
                             Text(
                                 text = "Recipe Box",
                                 fontSize = 30.sp,
                                 fontFamily = displayFontFamily,
-                                color = MaterialTheme.colorScheme.secondaryContainer
+                                color = if(isSystemInDarkTheme()){
+                                   MaterialTheme.colorScheme.primary
+                                }else{
+                                    MaterialTheme.colorScheme.secondaryContainer
+                                },
                             )
                         }
                     }
@@ -263,7 +279,11 @@ fun RecipeBox(
                     Icon(
                         contentDescription = "Adicionar",
                         painter = painterResource(id = R.drawable.add),
-                        tint = MaterialTheme.colorScheme.onPrimary
+                        tint = if(isSystemInDarkTheme()){
+                            MaterialTheme.colorScheme.onTertiaryContainer
+                        }else{
+                            MaterialTheme.colorScheme.onPrimary
+                        }
                     )
                 }
             }

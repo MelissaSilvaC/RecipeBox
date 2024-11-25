@@ -3,6 +3,7 @@ package com.example.recipebox.ui.screens
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -63,7 +64,11 @@ fun FormScreen(
                 Icon(
                     painter = painterResource(id = R.drawable.arrow_back),
                     contentDescription = "Voltar",
-                    tint = MaterialTheme.colorScheme.secondaryContainer,
+                    tint = if(isSystemInDarkTheme()){
+                        MaterialTheme.colorScheme.primary
+                    }else{
+                        MaterialTheme.colorScheme.primaryContainer
+                    },
                     modifier = Modifier.size(30.dp)
                 )
             }

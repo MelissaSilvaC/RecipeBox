@@ -1,6 +1,7 @@
 package com.example.recipebox.ui.components.recipe
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -62,26 +63,32 @@ fun FeedCard(
                     Icon(
                         painter = painterResource(id = R.drawable.profile),
                         contentDescription = "Foto",
-                        tint = Color.White,
+                        tint = if(isSystemInDarkTheme()){
+                            MaterialTheme.colorScheme.onTertiaryContainer
+                        }else{
+                            Color.White
+                        },
                         modifier = Modifier.size(24.dp)
                     )
                     Text(
                         text = userName,
-                        fontFamily = bodyFontFamily, // Substitua por sua fonte Poppins
-                        color = Color.White,
+                        fontFamily = bodyFontFamily,
+                        color = if(isSystemInDarkTheme()){
+                            MaterialTheme.colorScheme.onTertiaryContainer
+                        }else{
+                            Color.White
+                        },
                         modifier = Modifier.padding(start = 8.dp)
                     )
                 }
 
-                // Título da receita
                 Text(
                     text = recipeTitle,
-                    fontFamily = displayFontFamily, // Substitua por sua fonte AbeeZee
+                    fontFamily = displayFontFamily,
                     fontSize = 18.sp,
                     modifier = Modifier.padding(horizontal =  10.dp, vertical = 12.dp)
                 )
 
-                // Tags da receita
                 LazyRow(
                     modifier = Modifier
                         .fillMaxWidth()

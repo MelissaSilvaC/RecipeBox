@@ -1,6 +1,7 @@
 package com.example.recipebox.ui.screens.appBarScreens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,7 +47,11 @@ fun ProfileScreen(
             Icon(
                 painter = painterResource(id = R.drawable.profile),
                 contentDescription = "Foto",
-                tint = MaterialTheme.colorScheme.secondaryContainer,
+                tint = if(isSystemInDarkTheme()){
+                    MaterialTheme.colorScheme.onSecondaryContainer
+                }else{
+                    MaterialTheme.colorScheme.primary
+                },
                 modifier = Modifier.size(50.dp)
             )
             Column(modifier = Modifier.padding(start = 12.dp)) {
@@ -53,12 +59,20 @@ fun ProfileScreen(
                     text = displayName,
                     fontFamily = displayFontFamily,
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    color = if(isSystemInDarkTheme()){
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    }else{
+                        MaterialTheme.colorScheme.primary
+                    },
                     fontSize = 22.sp
                 )
                 Text(
                     text = email,
-                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    color = if(isSystemInDarkTheme()){
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    }else{
+                        MaterialTheme.colorScheme.primary
+                    },
                     fontSize = 16.sp
                 )
             }
@@ -80,7 +94,12 @@ fun ProfileScreen(
             Text(
                 text = "Sair",
                 fontFamily = displayFontFamily,
-                fontSize = 16.sp
+                fontSize = 16.sp,
+                color = if(isSystemInDarkTheme()){
+                    MaterialTheme.colorScheme.onTertiaryContainer
+                }else{
+                    Color.White
+                }
             )
         }
 

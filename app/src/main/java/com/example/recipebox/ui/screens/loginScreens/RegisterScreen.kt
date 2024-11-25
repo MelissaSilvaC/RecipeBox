@@ -1,7 +1,7 @@
 package com.example.recipebox.ui.screens.loginScreens
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,9 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,14 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.recipebox.R
+import com.example.recipebox.ui.components.ButtonAndLink
+import com.example.recipebox.ui.components.LogoAuth
 import com.example.recipebox.ui.components.PasswordTextField
 import com.example.ui.theme.displayFontFamily
 import com.google.firebase.auth.FirebaseAuth
@@ -89,25 +84,16 @@ fun RegisterScreen(
         Text(
             fontSize = 26.sp,
             fontFamily = displayFontFamily,
-            color = MaterialTheme.colorScheme.primary,
+            color = if(isSystemInDarkTheme()){
+                MaterialTheme.colorScheme.onSecondaryContainer
+            }else{
+                MaterialTheme.colorScheme.primary
+            },
             text = "Tenha as suas receitas na palma da sua mão!",
             modifier = Modifier.padding(bottom = 34.dp, start = 8.dp, end = 8.dp)
         )
 
-        Image(painter = painterResource(
-            id = R.drawable.box_fill),
-            contentDescription = "RecipeBox Logo",
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondaryContainer),
-            modifier = Modifier.size(50.dp)
-        )
-
-        Text(
-            fontSize = 24.sp,
-            fontFamily = displayFontFamily,
-            color = MaterialTheme.colorScheme.secondaryContainer,
-            text = "Entre no RecipeBox",
-            modifier = Modifier.padding(bottom = 30.dp)
-        )
+        LogoAuth()
 
         TextField(
             value = name,
@@ -135,48 +121,17 @@ fun RegisterScreen(
             label = { Text("Confirme sua senha") }
         )
 
-        Button(
-            modifier = Modifier.fillMaxWidth().height(40.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.tertiaryContainer
-            ),
-            onClick = {
+        ButtonAndLink(
+            buttonClick = {
                 if (password == confirmPassword) {
                     handleLogin()
                 } else {
                     errorMessage = "As senhas não coincidem."
-                }
-            }
-        ) {
-            Text(
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
-                text = "Cadastrar-se",
-                color = Color.White
-            )
-        }
+                }},
+            linkClick = { navigateToLogin() },
+            errorMessage = errorMessage,
+            buttonText = "Cadastrar-se"
+        )
 
-        AnimatedVisibility(visible = errorMessage != null) {
-            errorMessage?.let {
-                Text(
-                    text = it,
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.error,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-        TextButton(
-            onClick = { navigateToLogin() },
-        ) {
-            Text(
-                fontSize = 14.sp,
-                textDecoration = TextDecoration.Underline,
-                color = MaterialTheme.colorScheme.primary,
-                text ="Já tem uma conta? Entre aqui!"
-            )
-        }
     }
 }

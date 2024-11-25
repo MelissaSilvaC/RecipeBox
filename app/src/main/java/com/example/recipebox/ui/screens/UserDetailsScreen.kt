@@ -2,6 +2,7 @@ package com.example.recipebox.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -70,7 +71,11 @@ fun UserDetailsScreen(
                     }
                     Text(
                         fontSize = 20.sp,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        color = if(isSystemInDarkTheme()){
+                            Color.White
+                        }else{
+                            MaterialTheme.colorScheme.onTertiaryContainer
+                        },
                         text = recipe.userName
                     )
                 }

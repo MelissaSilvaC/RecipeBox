@@ -1,5 +1,6 @@
 package com.example.recipebox.ui.components
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,7 +33,11 @@ fun InfoSection(
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             text = title,
-            color = MaterialTheme.colorScheme.secondary
+            color = if(isSystemInDarkTheme()){
+                MaterialTheme.colorScheme.primary
+            }else{
+                MaterialTheme.colorScheme.secondary
+            }
         )
 
         Text(

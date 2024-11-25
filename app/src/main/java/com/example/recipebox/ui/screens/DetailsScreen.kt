@@ -3,6 +3,7 @@ package com.example.recipebox.ui.screens
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,7 +47,6 @@ fun DetailsScreen(
     NavigateBack: () -> Unit
 ) {
     val scrollState = rememberScrollState()
-
     fun deleteRecipe(recipeId: String, db: FirebaseFirestore, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         db.collection("Recipe").document(recipeId)
             .delete()
@@ -78,7 +78,11 @@ fun DetailsScreen(
                 modifier = Modifier.padding(vertical = 16.dp),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                color = if(isSystemInDarkTheme()){
+                    Color.White
+                }else{
+                    MaterialTheme.colorScheme.onTertiaryContainer
+                },
                 text = recipe.title
             )
         }
@@ -150,7 +154,11 @@ fun DetailsScreen(
             Button(
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    containerColor = if(isSystemInDarkTheme()){
+                        MaterialTheme.colorScheme.primary
+                    }else{
+                        MaterialTheme.colorScheme.primaryContainer
+                    },
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ),
                 onClick = {
